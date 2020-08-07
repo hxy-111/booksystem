@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员列表</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/font-awesome-4.7.0/css/font-awesome.min.css}">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline" style="width: 250px">
+                    <label class="layui-form-label">书名</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="bookname" name="bookname" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline" style="width: 250px">
+                    <label class="layui-form-label">作者</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="author" name="author" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline" style="width: 250px">
+                    <label class="layui-form-label">类别</label>
+                    <div class="layui-input-block">
+                        <select id="categoryName"  name="categoryName" class="select">
+                            <option value="">请选择类别</option>
+                            <option th:each="type:${types}"
+                                    th:text="${type.category_name}"
+                                    th:value="${type.category_name}"/>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline" style="width: 250px">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <select id="state"  name="state" class="select">
+                            <option value="">请选择状态</option>
+                            <option value=1>在馆</option>
+                            <option value=0>借出</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-admin" data-type="search_table">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">删除</button>
+                <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+            </div>
+
+            <table id="table" lay-filter="table"></table>
+
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+
+<script type="text/html" id="table_admin">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="fa fa-pencil"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i>删除</a>
+</script>
+
+<script>
+
+    layui.use(['jquery','layer', 'table'], function(){
+        var table = layui.table;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        //执行一个 table 实例
+        table.render({
+            elem: '#table',
+            height: 500,
+            url: '/manager/listBook', //数据接口
+            title: '用户列表',
+            page: true,
+            limits: [5,10,15,20],
+            limit: 5,
+            cols: [
+                [ //表头
+                    {type: 'checkbox', fixed: 'left'},
+                    // {field: 'bookId', title: '编号', width:70},
+                    {field: 'bookName', title: '书名', width:150},
+                    {field: 'bookAuthor', title: '作者', width: 130},
+                    {field: 'bookPublish', title: '出版社', width:200},
+                    {field: 'categoryName', title: '类别', width:120},
+                    {field: 'bookPrice', title: '价格', width: 150},
+                    {field: 'state', title: '状态', width: 120,
+                        templet: function(res){
+                            if (res.state){
+                                return '<a class="layui-btn layui-btn-success layui-btn-xs">在馆</a>';
+                            }else{
+                                return '<a class="layui-btn layui-btn-success layui-btn-xs">借出</a>';
+                            }
+                    }},
+                    {fixed: 'right',title:'操作', width: 240, align:'center', toolbar: '#table_admin'}
+                ]
+            ],
+            //用于搜索结果重载
+            id: 'sreload'
+        });
+
+        var active = {
+            search_table: function(){
+                var bookname = $('#bookname');
+                var author = $('#author');
+                var categoryName = $('#categoryName');
+                var state = $('#state');
+                //执行重载
+                table.reload('sreload', {
+                    //一定要加不然乱码
+                    method: 'post'
+                    ,page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        //表示传到后台的参数
+                        bookname: bookname.val(),
+                        author: author.val(),
+                        categoryName: categoryName.val(),
+                        state: state.val()
+                    }
+                });
+            },
+            add: function() {
+                layer.open({
+                    type: 2,
+                    title: '添加书籍',
+                    skin: 'layui-layer-demo', //加上边框
+                    area: ['550px', '550px'], //宽高
+                    content: '/manager/addBook'
+                });
+            },
+            batchdel:function () {
+                var checkAll = table.checkStatus('sreload');
+                if(checkAll.data.length == 0){
+                    layer.msg('请选择数据进行删除');
+                }else{
+                    layer.confirm('真的删除行么', function(){
+                        var jsonObj = {};
+                        for(var i=0;i<checkAll.data.length;i++){
+                            jsonObj["ids["+i+"]"] = checkAll.data[i].bookId;
+                        }
+                        $.ajax({
+                            url:'/manager/delBook',
+                            data:jsonObj,
+                            dataType:'json',
+                            type:'post',
+                            success:function (data) {
+                                if (data.success){
+                                    window.location.reload();
+                                }else{
+                                    layer.msg(data.message);
+                                }
+                            }
+                        })
+                    });
+                }
+
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        table.on('tool(table)', function(obj){ //注：tool 是工具条事件名，table 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'edit'){
+                edit(data);
+            } else if(layEvent === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    del(data,obj,index);
+                });
+            }
+        });
+
+        function edit(data) {
+            layer.open({
+                type: 2,
+                title: '修改书籍信息',
+                skin: 'layui-layer-demo', //加上边框
+                area: ['550px', '550px'], //宽高
+                method: 'post',
+                content: '/manager/addBook?type=edit&id='+data.bookId
+            });
+        }
+        //后边两个参数仅仅是因为要执行动态删除dom
+        function del(data,obj,index){
+            var jsonObj = {};
+            jsonObj["ids[0]"] = data.bookId;
+            $.ajax({
+                url:'/manager/delBook',
+                data:jsonObj,
+                dataType:'json',
+                type:'post',
+                success:function (data) {
+                    if (data.success){
+                        obj.del(); //删除对应行（tr）的DOM结构
+                        layer.close(index);
+                    }else{
+                        layer.msg(data.message);
+                    }
+                }
+            })
+        }
+
+    });
+
+
+</script>
+</body>
+</html>

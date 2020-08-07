@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.system.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.book.system.entity.Category">
+        <id column="category_id" property="categoryId" />
+        <result column="category_name" property="categoryName" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        category_id,category_name
+    </sql>
+
+    <!--  类别列表  -->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from book_category
+        <where>
+            <if test="categoryName!=null"> and category_name like concat("%",#{categoryName},"%") </if>
+        </where>
+    </select>
+
+    <!--  根据ID删除图书类型  -->
+    <delete id="delByCategoryIds" parameterType="java.util.List">
+        delete from book_category where category_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--  根据ID查询图书  -->
+    <select id="selectById" parameterType="int" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from book_category
+        where category_id = #{categoryId}
+    </select>
+
+    <!--  添加图书类型  -->
+    <insert id="insertCategory" parameterType="com.book.system.entity.Category">
+        insert into book_category(category_name)
+        values (#{categoryName})
+    </insert>
+
+    <!--  修改图书类型  -->
+    <insert id="editByCategory" parameterType="com.book.system.entity.Category">
+        update book_category
+        set category_name=#{categoryName}
+        where category_id=#{categoryId}
+    </insert>
+</mapper>

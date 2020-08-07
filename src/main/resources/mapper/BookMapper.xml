@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.system.mapper.BookMapper">
+    <resultMap id="BaseResultMap" type="com.book.system.entity.Book">
+        <id column="book_id" property="bookId" />
+        <result column="book_name" property="bookName" />
+        <result column="book_author" property="bookAuthor" />
+        <result column="book_publish" property="bookPublish" />
+        <result column="book_category" property="bookCategory" />
+        <result column="book_price" property="bookPrice" />
+        <result column="book_state" property="state" />
+        <result column="book_introduction" property="bookIntro" />
+        <!-- 添加元素 -->
+        <result column="category_name" property="categoryName" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        book_id,book_name,book_author,book_publish,category_name,book_price,book_state,book_category,book_introduction
+    </sql>
+
+    <!--  图书列表  -->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from book,book_category
+        <where>
+            <if test="bookName!=null"> and book.book_name LIKE concat("%",#{bookName},"%") </if>
+            <if test="bookAuthor!=null"> and book.book_author = #{bookAuthor} </if>
+            <if test="categoryName!=null"> and book_category.category_name= #{categoryName} </if>
+            <if test="state!=null"> and book.book_state= #{state} </if>
+            and book.book_category=book_category.category_id
+        </where>
+    </select>
+
+    <!--  查询所有图书类别  -->
+    <select id="queryType" resultType="java.util.Map">
+        select
+        category_id,category_name
+        from book_category
+    </select>
+
+    <!--  根据ID删除图书  -->
+    <delete id="delByBookIds" parameterType="java.util.List">
+        delete from book where book_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--  根据ID查询图书  -->
+    <select id="selectById" parameterType="int" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from book,book_category
+        <where>
+            book.book_category=book_category.category_id
+            and book_id = #{id}
+        </where>
+    </select>
+
+    <!--  添加图书  -->
+    <insert id="insertBook" parameterType="com.book.system.entity.Book">
+        insert into book(book_name,book_author,book_publish,book_category,book_price,book_state,book_introduction)
+        values (#{bookName},#{bookAuthor},#{bookPublish},#{categoryName},#{bookPrice},#{state},#{bookIntro})
+    </insert>
+
+    <!--  修改图书  -->
+    <insert id="editByBook" parameterType="com.book.system.entity.Book">
+        update book
+        set
+        book_name=#{bookName},book_author=#{bookAuthor},book_publish=#{bookPublish},book_category=#{categoryName}
+        ,book_price=#{bookPrice},book_state=#{state},book_introduction=#{bookIntro}
+        where book_id=#{bookId}
+    </insert>
+
+</mapper>

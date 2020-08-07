@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加管理员</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+</head>
+<body>
+    <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
+        <input type="hidden" name="bookId" th:if="${book}" th:value="${book.bookId}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">书名</label>
+            <div class="layui-input-inline">
+                <input th:value="${book != null}?${book.bookName}:''" type="text" name="bookName" lay-verify="required" placeholder="请输入书名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">作者</label>
+            <div class="layui-input-inline">
+                <input th:value="${book != null}?${book.bookAuthor}:''" type="text" name="bookAuthor" lay-verify="bookAuthor" placeholder="请输入作者" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">出版社</label>
+            <div class="layui-input-inline">
+                <input th:value="${book != null}?${book.bookPublish}:''" type="text" name="bookPublish" lay-verify="bookPublish" placeholder="请输入出版社" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类别</label>
+            <div class="layui-input-inline">
+                <select name="categoryName">
+                    <option th:if="${book == null}" value="0">请选择类别</option>
+                    <option th:each="type:${types}"
+                            th:text="${type.category_name}"
+                            th:value="${type.category_id}"
+                            th:selected="${book != null and book.categoryName==type.category_name}"/>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">价格</label>
+            <div class="layui-input-inline">
+                <input th:value="${book != null}?${book.bookPrice}:''" type="text" name="bookPrice" lay-verify="bookPrice" placeholder="请输入价格" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <input th:checked="${book !=null and book.state == 1}?true:false" type="checkbox" value="1" name="state" lay-skin="switch" lay-text="在馆|借出">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea th:text="${book != null}?${book.bookIntro}:''" id="bookIntro" name="bookIntro" placeholder="请输入书籍简介" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button th:text="${book != null}?'立即修改':'立即添加'" class="layui-btn" lay-submit="" lay-filter="addbook">立即添加</button>
+                <button th:if="${book == null}" type="reset" id="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/layuiadmin/layui/layui.js}"></script>
+    <script>
+
+        layui.use(['form','jquery'], function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            form.on('submit(addbook)',function (data) {
+                $.ajax({
+                    url:'/manager/addBook',
+                    data:data.field,
+                    dataType:'json',
+                    type:'post',
+                    success:function (data) {
+                        if (data.success){
+                            layer.msg(data.message);
+                            layer.alert(data.message,function(){
+                                window.parent.location.reload();//刷新父页面
+                                parent.layer.close(index);//关闭弹出层
+                            });
+                        }else{
+                            layer.msg(data.message);
+                        }
+                    }
+                });
+                return false;
+            })
+
+            //重置
+            $("#reset").click(function () {
+                $("input").val("");
+            })
+
+        });
+
+
+    </script>
+</body>
+</html>
