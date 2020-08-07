@@ -27,7 +27,7 @@
         </foreach>
     </delete>
 
-    <!--  根据ID查询图书  -->
+    <!--  根据ID查询图书类型信息  -->
     <select id="selectById" parameterType="int" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" />
         from book_category

@@ -15,6 +15,6 @@
     <select id="selectByAdminId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
-        from treemenu
+        from adminmenu
     </select>
 </mapper>

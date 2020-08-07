@@ -14,7 +14,7 @@
     <select id="adminLogin" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
-        from p_admin
+        from admin
         where admin_name = #{adminName,jdbcType=VARCHAR} AND admin_pwd=#{adminPwd,jdbcType=VARCHAR}
     </select>
 </mapper>
