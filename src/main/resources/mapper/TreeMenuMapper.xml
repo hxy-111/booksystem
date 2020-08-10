@@ -17,4 +17,11 @@
         <include refid="Base_Column_List"></include>
         from adminmenu
     </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from usermenu
+    </select>
+
 </mapper>

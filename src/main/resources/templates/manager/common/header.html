@@ -35,7 +35,7 @@
             </li>
             <li class="layui-nav-item" lay-unselect style="margin-right: 20px">
                 <a href="javascript:;">
-                    <cite th:text="${session.username}"></cite>
+                    <cite th:text="${session.admin != null}?${session.admin.adminName}:${session.user.userName}"></cite>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a lay-href="/manager/info">基本资料</a></dd>

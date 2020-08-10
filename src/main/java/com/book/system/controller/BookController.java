@@ -1,7 +1,9 @@
 package com.book.system.controller;
 
 import com.book.system.entity.Book;
+import com.book.system.entity.Borrow;
 import com.book.system.service.BookService;
+import com.book.system.service.BorrowService;
 import com.book.system.utils.AjaxResult;
 import com.book.system.utils.Data;
 import com.github.pagehelper.PageHelper;
@@ -25,6 +27,8 @@ public class BookController {
     private AjaxResult ajaxResult;
     @Autowired
     private BookService bookService;
+    @Autowired
+    private BorrowService borrowService;
 
     /**
      * 跳转书籍页面
@@ -137,6 +141,5 @@ public class BookController {
         }
         return ajaxResult;
     }
-
 
 }

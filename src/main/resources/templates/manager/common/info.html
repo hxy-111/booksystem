@@ -20,27 +20,21 @@
                         <from>
                             <div class="layui-form" lay-filter="">
                                 <div class="layui-form-item">
-                                    <label class="layui-form-label">我的角色</label>
-                                    <div class="layui-input-inline">
-                                        <input th:value="${role.name}" type="text" autocomplete="off" class="layui-input layui-disabled" disabled>
-                                    </div>
-                                </div>
-                                <div class="layui-form-item">
                                     <label class="layui-form-label">用户名</label>
                                     <div class="layui-input-inline">
-                                        <input th:value="${session.admin != null}?${session.admin.username}:''" type="text" name="username" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                        <input th:value="${session.admin != null}?${session.admin.adminName}:${session.user.userName}" type="text" name="username" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">手机</label>
                                     <div class="layui-input-inline">
-                                        <input th:value="${session.admin != null}?${session.admin.phone}:''" type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
+                                        <input th:value="${session.admin != null}?${session.admin.adminPhone}:${session.user.userPhone}" type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">邮箱</label>
                                     <div class="layui-input-inline">
-                                        <input th:value="${session.admin != null}?${session.admin.email}:''" type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                                        <input th:value="${session.admin != null}?${session.admin.adminEmail}:${session.user.userEmail}" type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">

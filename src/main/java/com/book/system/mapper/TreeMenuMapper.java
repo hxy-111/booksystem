@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface TreeMenuMapper {
     List<TreeMenu> selectByAdminId();
+
+    List<TreeMenu> selectByUserId();
 }

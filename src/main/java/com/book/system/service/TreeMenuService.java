@@ -12,4 +12,6 @@ public interface TreeMenuService {
 
     List<TreeMenu> selectByAdminId();
 
+    List<TreeMenu> selectByUserId();
+
 }

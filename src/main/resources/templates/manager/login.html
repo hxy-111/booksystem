@@ -23,8 +23,17 @@
     <div class="box">
         <form action="" class="layui-form">
             <h1>Login</h1>
-            <input type="text" name="username" autocomplete="off" placeholder="Username" lay-verify="required"/>
-            <input type="password" name="password" placeholder="Password" lay-verify="required"/>
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <select name="users" lay-verify="required" lay-search="">
+                        <option value="">请选择身份</option>
+                        <option value="user">用户</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+            </div>
+            <input type="text" name="username" autocomplete="off" placeholder="username" lay-verify="required"/>
+            <input type="password" name="password" placeholder="password" lay-verify="required"/>
             <a class="submit" lay-submit lay-filter="login">Login</a>
         </form>
     </div>
@@ -40,11 +49,15 @@
             var form = layui.form;
             var $ = layui.jquery;
             form.on('submit(login)',function (data) {
+                data = data.field;
                 $.ajax({
                     url:'/manager/adminLogin',
-                    data:data.field,
                     dataType:'json',
                     type:'post',
+                    // data:data.field,
+                    // contentType:"application/json;charset=utf-8",
+                    // data:JSON.stringify({"users":data.users,"username":data.username,"password":data.password}),
+                    data:{"users":data.users,"username":data.username,"password":data.password},
                     success:function (data) {
                         if (data.success){
                             layer.msg(data.message,{time:700},function() {

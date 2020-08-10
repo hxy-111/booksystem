@@ -45,5 +45,21 @@ public class BookServiceImpl implements BookService {
         return bookMapper.editByBook(book);
     }
 
+    @Override
+    public boolean borrowBook(Integer bookId) {
+        if (bookMapper.borrowBook(bookId)!=null){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateBookState(Integer bookId) {
+        if (bookMapper.updateBookState(bookId)!=0){
+            return true;
+        }
+        return false;
+    }
+
 
 }

@@ -17,4 +17,8 @@ public interface BookService {
     int insertBook(Book book);
 
     int editByBook(Book book);
+
+    boolean borrowBook(Integer bookId);
+
+    boolean updateBookState(Integer bookId);
 }

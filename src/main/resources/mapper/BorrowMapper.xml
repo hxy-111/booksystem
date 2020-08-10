@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.system.mapper.BorrowMapper">
+    <resultMap id="BaseResultMap" type="com.book.system.entity.Borrow">
+        <result column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="book_id" property="bookId" />
+        <result column="borrow_date" property="borrowDate" />
+        <result column="return_date" property="returnDate" />
+        <association property="books" javaType="com.book.system.entity.Book" resultMap="bookResult"/>
+    </resultMap>
+    <resultMap id="bookResult" type="com.book.system.entity.Book" >
+        <id column="book_id" property="bookId" />
+        <result column="book_name" property="bookName" />
+        <result column="book_state" property="state" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,user_id,book_id,borrow_date,return_date
+    </sql>
+
+    <!-- 插入借阅记录   -->
+    <insert id="borrowBook" parameterType="com.book.system.entity.Borrow">
+        insert into borrowbook(user_id,book_id,borrow_date)
+        values (#{userId},#{bookId},#{borrowDate})
+    </insert>
+
+    <!--  所有借阅记录列表  -->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        id,user_id,borrowbook.book_id,borrow_date,return_date,book_name
+        from borrowbook,book
+        where borrowbook.book_id=book.book_id and user_id=#{userId}
+    </select>
+
+    <!--  用户借阅记录列表  -->
+    <!--  还书列表  -->
+    <select id="queryListById" resultMap="BaseResultMap">
+        select
+        id,user_id,borrowbook.book_id,borrow_date,return_date,book_name,book_state
+        from borrowbook,book
+        where borrowbook.book_id=book.book_id and user_id=#{userId} and return_date is null
+    </select>
+
+    <!--  根据ID查询图书编号  -->
+    <select id="selectById" parameterType="int" resultType="int">
+        select book_id
+        from borrowbook
+        where id = #{id}
+    </select>
+
+    <!-- 更新还书记录   -->
+    <update id="returnBook" >
+        update borrowbook
+        set return_date=#{returnDate}
+        where id=#{id}
+    </update>
+
+    <!--  更新图书状态  -->
+    <update id="updateBookState">
+        update book
+        set book_state=1
+        where book_id=#{bookId}
+    </update>
+</mapper>

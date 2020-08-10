@@ -44,6 +44,29 @@ public class TreeMenuServiceImpl implements TreeMenuService {
         return root;
     }
 
+    @Override
+    public List<TreeMenu> selectByUserId() {
+        //获取用户所有的全部权限(父,子权限)菜单
+        List<TreeMenu> treeMenuList = treeMenuMapper.selectByUserId();
+        //保存所有的父(主)菜单
+        List<TreeMenu> root = new ArrayList<>();
+        //遍历所有菜单集合,如果是主菜单的话直接放入root集合
+        for(TreeMenu treeMenu : treeMenuList){
+            //pid为0,则为父(主)菜单
+            if(treeMenu.getPid() == -1){
+                root.add(treeMenu);
+            }
+        }
+        //这个是遍历所有主菜单,分别获取所有主菜单的所有子菜单
+        for(TreeMenu treeMenu : root){
+            //获取所有子菜单 递归
+            List<TreeMenu> childrenList = getchildrenMeun(treeMenu.getId(),treeMenuList);
+            //这个是实体类中的子菜单集合
+            treeMenu.setChildren(childrenList);
+        }
+        return root;
+    }
+
     //递归获取子菜单
     public List<TreeMenu> getchildrenMeun(int id,List<TreeMenu> allMeun){
         //用于保存子菜单

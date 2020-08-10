@@ -43,11 +43,18 @@ public class ManagerController {
      * @param session
      * @return
      */
+
     @PostMapping("/treeMenu")
     @ResponseBody
     public Object treeMenu(HttpSession session){
-        List<TreeMenu> treeMenuList = treeMenuService.selectByAdminId();
-        session.setAttribute(Const.TREEMENU,treeMenuList);
+        List<TreeMenu> treeMenuList=null;
+        if (session.getAttribute("users").equals("admin")){
+            treeMenuList = treeMenuService.selectByAdminId();
+            session.setAttribute(Const.TREEMENU,treeMenuList);
+        }else if (session.getAttribute("users").equals("user")){
+            treeMenuList = treeMenuService.selectByUserId();
+            session.setAttribute(Const.TREEMENU,treeMenuList);
+        }
         return treeMenuList;
     }
 

@@ -63,12 +63,27 @@
     </insert>
 
     <!--  修改图书  -->
-    <insert id="editByBook" parameterType="com.book.system.entity.Book">
+    <update id="editByBook" parameterType="com.book.system.entity.Book">
         update book
         set
         book_name=#{bookName},book_author=#{bookAuthor},book_publish=#{bookPublish},book_category=#{categoryName}
         ,book_price=#{bookPrice},book_state=#{state},book_introduction=#{bookIntro}
         where book_id=#{bookId}
-    </insert>
+    </update>
 
+
+    <!-- 查看书籍是否可借   -->
+    <select id="borrowBook" resultMap="BaseResultMap">
+        select
+        book_id,book_state
+        from book
+        where book_id = #{bookId,jdbcType=VARCHAR} AND book_state=1
+    </select>
+
+    <!--  更新图书状态  -->
+    <update id="updateBookState" parameterType="com.book.system.entity.Book">
+        update book
+        set book_state=0
+        where book_id=#{bookId}
+    </update>
 </mapper>

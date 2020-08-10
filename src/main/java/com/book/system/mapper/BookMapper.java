@@ -17,4 +17,8 @@ public interface BookMapper {
     int insertBook(Book book);
 
     int editByBook(Book book);
+
+    Book borrowBook(Integer bookId);
+
+    int updateBookState(Integer bookId);
 }
