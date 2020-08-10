@@ -8,11 +8,16 @@
         <result column="borrow_date" property="borrowDate" />
         <result column="return_date" property="returnDate" />
         <association property="books" javaType="com.book.system.entity.Book" resultMap="bookResult"/>
+        <association property="users" javaType="com.book.system.entity.User" resultMap="userResult"/>
     </resultMap>
     <resultMap id="bookResult" type="com.book.system.entity.Book" >
         <id column="book_id" property="bookId" />
         <result column="book_name" property="bookName" />
         <result column="book_state" property="state" />
+    </resultMap>
+    <resultMap id="userResult" type="com.book.system.entity.User" >
+        <id column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
     </resultMap>
     <sql id="Base_Column_List">
         id,user_id,book_id,borrow_date,return_date
@@ -27,12 +32,19 @@
     <!--  所有借阅记录列表  -->
     <select id="queryList" resultMap="BaseResultMap">
         select
-        id,user_id,borrowbook.book_id,borrow_date,return_date,book_name
+        id,borrowbook.user_id,borrowbook.book_id,borrow_date,return_date,book_name,user_name
+        from borrowbook,book,user
+        where borrowbook.book_id=book.book_id and borrowbook.user_id=user.user_id
+    </select>
+
+    <!--  用户借阅记录列表  -->
+    <select id="queryListByIds" resultMap="BaseResultMap">
+        select
+        id,user_id,borrowbook.book_id,borrow_date,return_date,book_name,book_state
         from borrowbook,book
         where borrowbook.book_id=book.book_id and user_id=#{userId}
     </select>
 
-    <!--  用户借阅记录列表  -->
     <!--  还书列表  -->
     <select id="queryListById" resultMap="BaseResultMap">
         select
